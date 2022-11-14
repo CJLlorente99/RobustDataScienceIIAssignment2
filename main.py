@@ -126,23 +126,37 @@ def plotAndPrintExercise1(original_data, results):
     figNum += 1
     plt.title("Original data " + n)
     plt.hist(original_data, bins=200, density=True, histtype="stepfilled")
+    plt.savefig("OriginalData" + n)
 
     # Show evolution of the location
     plt.figure(figNum)
     figNum += 1
     plt.title("Evolution of the location estimator " + n)
     plt.plot(results["means"])
+    plt.savefig("EvolutionEstimator" + n)
 
     # Show weight and phi
-    fig, axs = plt.subplots(1, 2)
+    # fig, axs = plt.subplots(1, 2)
+    # figNum += 1
+    # axs[0].set_title("Phi " + n)
+    # axs[0].plot(results["param"]["x"], results["param"]["phi"])
+    # axs[1].set_title("Phi/x " + " + normalize final data " + n)
+    # axs[1].plot(results["param"]["x"], results["param"]["phi_x"])
+
+    plt.figure(figNum)
     figNum += 1
-    axs[0].set_title("Phi " + n)
-    axs[0].plot(results["param"]["x"], results["param"]["phi"])
-    axs[1].set_title("Phi/x " + " + normalize final data " + n)
-    axs[1].plot(results["param"]["x"], results["param"]["phi_x"])
+    plt.title("Phi " + n)
+    plt.plot(results["param"]["x"], results["param"]["phi"])
+    plt.savefig("Phi" + n)
+
+    plt.figure(figNum)
+    figNum += 1
+    plt.title("Phi/x " + " + normalize final data " + n)
+    plt.plot(results["param"]["x"], results["param"]["phi_x"])
 
     # Show final normalize distribution of data
     plt.hist(results["y"], bins=200, density=True)
+    plt.savefig("Phi_x" + n)
 
 
 def generateOutlierAndEstimateMean(gaussian_mean, gaussian_var, gaussian_size, min_outlier=0, max_outlier=0):
@@ -192,6 +206,7 @@ def plotAndPrintExercise2(errors, outliers):
     figNum += 1
     plt.title("Error between real mean and m-estimated mean")
     plt.plot(outliers, errors)
+    plt.savefig("ErrorMeanM-estimated")
 
 
 if __name__ == '__main__':
@@ -218,4 +233,4 @@ if __name__ == '__main__':
     errors /= N
     plotAndPrintExercise2(errors, outliers)
 
-    plt.show()
+    # plt.show()

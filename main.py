@@ -190,6 +190,7 @@ def plotAndPrintExercise2(errors, outliers):
 
     plt.figure(figNum)
     figNum += 1
+    plt.title("Error between real mean and m-estimated mean")
     plt.plot(outliers, errors)
 
 

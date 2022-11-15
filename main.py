@@ -23,7 +23,6 @@ def loadAndShowData(file_name):
 
     return x
 
-
 def calculateWeightsMean(y, mean, std_dev, name):
     """
     Function that normalizes and calculates the weights of the given data
@@ -60,8 +59,8 @@ def calculateWeightsMean(y, mean, std_dev, name):
     elif name == "x5":
         w = norm.pdf(normalizeY, loc=-0.75, scale=0.5)*0.5 + norm.pdf(normalizeY, loc=0.4, scale=0.45)*0.5
         x = np.linspace(-50, 50, num=5000)
-        phi = (norm.pdf(x, loc=-0.75, scale=0.5)*0.5 + norm.pdf(x, loc=0.4, scale=0.45)*0.5) * x
-        phi_x = norm.pdf(x, loc=-0.75, scale=0.5)*0.5 + norm.pdf(x, loc=0.4, scale=0.45)*0.5
+        phi = (norm.pdf(x, loc=-0.75, scale=0.5) * 0.5 + norm.pdf(x, loc=0.4, scale=0.45) * 0.5)*x
+        phi_x = norm.pdf(x, loc=-0.75, scale=0.5) * 0.5 + norm.pdf(x, loc=0.4, scale=0.45) * 0.5
     else:
         # Gaussian
         w = norm.pdf(normalizeY)
@@ -125,7 +124,7 @@ def plotAndPrintExercise1(original_data, results):
     plt.figure(figNum)
     figNum += 1
     plt.title("Original data " + n)
-    plt.hist(original_data, bins=200, density=True, histtype="stepfilled")
+    plt.hist(original_data, bins=100, density=True, histtype="stepfilled")
     plt.savefig("OriginalData" + n)
 
     # Show evolution of the location
@@ -155,7 +154,7 @@ def plotAndPrintExercise1(original_data, results):
     plt.plot(results["param"]["x"], results["param"]["phi_x"])
 
     # Show final normalize distribution of data
-    plt.hist(results["y"], bins=200, density=True)
+    plt.hist(results["y"], bins=100, density=True)
     plt.savefig("Phi_x" + n)
 
 
@@ -172,6 +171,7 @@ def generateOutlierAndEstimateMean(gaussian_mean, gaussian_var, gaussian_size, m
     """
     # Init vars
     errors = []
+    errorsMLE = []
     estimateMean1 = 0
     gaussianVector = []
 
@@ -187,14 +187,18 @@ def generateOutlierAndEstimateMean(gaussian_mean, gaussian_var, gaussian_size, m
 
         # Compute the mean estimator via Huber
         c = 3*math.sqrt(gaussian_var)  # If c is lowered, better results are achieved
-        estimateMean = mu_hat = rsp.MLocHUB(gaussianVectorWithOutlier, c)
+        estimateMean = rsp.MLocHUB(gaussianVectorWithOutlier, c)
+
+        # Compute the mean estimator via MLE
+        estimateMeanMLE = gaussianVectorWithOutlier.mean()
 
         errors = np.append(errors, estimateMean - gaussian_mean)
+        errorsMLE = np.append(errorsMLE, estimateMeanMLE - gaussian_mean)
 
-    return errors, outliers
+    return errors, errorsMLE, outliers
 
 
-def plotAndPrintExercise2(errors, outliers):
+def plotAndPrintExercise2(errorsMEstimate, errorsMLE, outliers):
     """
     Funtion that plots and prints everything necessary for the task 2
     :param errors: errors between the mean estimated and the real mean
@@ -205,7 +209,13 @@ def plotAndPrintExercise2(errors, outliers):
     plt.figure(figNum)
     figNum += 1
     plt.title("Error between real mean and m-estimated mean")
-    plt.plot(outliers, errors)
+    plt.plot(outliers, errorsMEstimate)
+    plt.savefig("ErrorMeanM-estimated")
+
+    plt.figure(figNum)
+    figNum += 1
+    plt.title("Error between real mean and MLE mean")
+    plt.plot(outliers, errorsMLE)
     plt.savefig("ErrorMeanM-estimated")
 
 
@@ -228,9 +238,9 @@ if __name__ == '__main__':
     N = 100
 
     for i in range(N):
-        error, outliers = generateOutlierAndEstimateMean(1, 2, 100, -100, 100)
+        error, errorsMLE, outliers = generateOutlierAndEstimateMean(1, 2, 100, -100, 100)
         errors = np.add(errors, error)
     errors /= N
-    plotAndPrintExercise2(errors, outliers)
+    plotAndPrintExercise2(errors, errorsMLE, outliers)
 
-    # plt.show()
+    plt.show()
